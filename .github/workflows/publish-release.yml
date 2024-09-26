@@ -17,6 +17,14 @@ jobs:
           - os: macos-latest
             TARGET: macos
             ASSET_MIME: application/zip
+          - os: windows-latest
+            TARGET: windows
+            CMD_BUILD: >
+              yarn &&
+              yarn build &&
+              move dist/your_executable.exe fosslight-gui-windows.exe
+            OUT_FILE_NAME: fosslight-gui-windows.exe
+            ASSET_MIME: application/octet-stream
     steps:
     - uses: actions/checkout@v3
     - name: Get the version
