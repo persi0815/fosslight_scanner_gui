@@ -61,6 +61,12 @@ jobs:
           pwd
         fi
       shell: bash
+    - name: Set asset_path
+      run: |
+        if [ "${{ matrix.TARGET }}" == "windows" ]; then
+          echo "asset_path=./dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip" >> $GITHUB_ENV
+        else
+          echo "asset_path=./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || 'zip' }}" >> $GITHUB_ENV
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1.0.1
@@ -68,6 +74,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}    
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ${{ matrix.TARGET == 'windows' && './dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip' || './fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'zip' }}' }}
-        asset_name: fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'zip' }}
+        asset_path: ${{ env.asset_path }}
+        asset_name: fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || 'zip' }}
         asset_content_type: ${{ matrix.ASSET_MIME }}
