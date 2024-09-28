@@ -48,6 +48,8 @@ jobs:
           sleep 5
           ditto -c -k --sequesterRsrc --keepParent "dist/mac/fosslight_gui.app" fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip
           mv fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
+          echo "current location..."
+          pwd
         elif [ "${{ matrix.TARGET }}" == "windows" ]; then
           yarn build:win
           sleep 5
@@ -55,6 +57,8 @@ jobs:
           mv ./dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip ./dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
           echo "Listing dist directory..."
           ls ./dist
+          echo "current location..."
+          pwd
         fi
       shell: bash
     - name: Upload Release Asset
