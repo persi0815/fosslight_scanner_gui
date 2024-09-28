@@ -5,8 +5,8 @@ on:
     types: [published]
 
 jobs:
-  build:
-    name: Build packages
+  build-unix:
+    name: Build Unix packages
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -17,9 +17,6 @@ jobs:
           - os: macos-latest
             TARGET: macos
             ASSET_MIME: application/zip
-          - os: windows-latest
-            TARGET: windows
-            ASSET_MIME: application/vnd.microsoft.portable-executable
     steps:
     - uses: actions/checkout@v3
     - name: Get the version
@@ -42,9 +39,6 @@ jobs:
         elif [ "${{ matrix.TARGET }}" == "macos" ]; then
           yarn build:mac
           ditto -c -k --sequesterRsrc --keepParent "dist/mac/fosslight_gui.app" fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
-        elif [ "${{ matrix.TARGET }}" == "windows" ]; then
-          yarn build:win
-          mv dist/fosslight_gui*.exe fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.exe
         fi
       shell: bash
     - name: Upload Release Asset
@@ -54,6 +48,40 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}    
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'exe' }}
-        asset_name: fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'exe' }}
+        asset_path: ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || 'zip' }}
+        asset_name: fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || 'zip' }}
         asset_content_type: ${{ matrix.ASSET_MIME }}
+
+  build-windows:
+    name: Build Windows package
+    needs: build-unix
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Get the version
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+      shell: bash
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Install dependencies
+      run: yarn install
+    - name: Build with yarn for Windows
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        yarn build:win
+        mv dist/fosslight_gui*.exe fosslight-gui-windows-setup-${{ env.VERSION }}.exe
+      shell: bash
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}    
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./fosslight-gui-windows-setup-${{ env.VERSION }}.exe
+        asset_name: fosslight-gui-windows-setup-${{ env.VERSION }}.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
