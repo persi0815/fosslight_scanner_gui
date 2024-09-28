@@ -9,7 +9,9 @@ files:
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - "out/**/*"
 win:
+  artifactName: ${name}-${version}-setup.${ext}
   executableName: fosslight_gui
   target:
     - target: nsis
