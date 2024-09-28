@@ -68,6 +68,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}    
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'zip' }}
+        asset_path: ${{ matrix.TARGET == 'windows' && './dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip' || './fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'zip' }}' }}
         asset_name: fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'zip' }}
         asset_content_type: ${{ matrix.ASSET_MIME }}
