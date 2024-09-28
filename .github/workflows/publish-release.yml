@@ -36,15 +36,15 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
-        if [ "${{ matrix.TARGET }}" == "ubuntu" ]; then
+        if [ "$(uname)" == "Linux" ]; then
           yarn build
-          tar -czf fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.tar.gz -C dist/linux-unpacked .
-        elif [ "${{ matrix.TARGET }}" == "macos" ]; then
+          tar -czf fosslight-gui-linux-setup-${VERSION}.tar.gz -C dist/linux-unpacked .
+        elif [ "$(uname)" == "Darwin" ]; then
           yarn build:mac
-          ditto -c -k --sequesterRsrc --keepParent "dist/mac/fosslight_gui.app" fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
-        elif [ "${{ matrix.TARGET }}" == "windows" ]; then
+          ditto -c -k --sequesterRsrc --keepParent "dist/mac/fosslight_gui.app" fosslight-gui-mac-setup-${VERSION}.zip
+        elif [ "$OS" == "Windows_NT" ]; then
           yarn build:win
-          mv dist/fosslight_gui*.exe fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.exe
+          mv dist/fosslight_gui*.exe fosslight-gui-windows-setup-${VERSION}.exe
         fi
       shell: bash
     - name: Upload Release Asset
