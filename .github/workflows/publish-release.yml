@@ -33,7 +33,7 @@ jobs:
     - name: Install dependencies
       run: yarn install
     - name: Clean previous build
-      run: rm -rf dist
+      run: npm run clean
     - name: Build with yarn for ${{ matrix.TARGET }}
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
