@@ -32,19 +32,27 @@ jobs:
         node-version: '18'
     - name: Install dependencies
       run: yarn install
+    - name: Clean previous build
+      run: rm -rf dist
     - name: Build with yarn for ${{ matrix.TARGET }}
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         if [ "${{ matrix.TARGET }}" == "ubuntu" ]; then
           yarn build
-          tar -czf fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.tar.gz -C dist/linux-unpacked .
+          sleep 5
+          tar -czf fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.tar.gz -C dist/linux-unpacked .
+          mv fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.tar.gz fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.tar.gz
         elif [ "${{ matrix.TARGET }}" == "macos" ]; then
           yarn build:mac
-          ditto -c -k --sequesterRsrc --keepParent "dist/mac/fosslight_gui.app" fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
+          sleep 5
+          ditto -c -k --sequesterRsrc --keepParent "dist/mac/fosslight_gui.app" fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip
+          mv fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
         elif [ "${{ matrix.TARGET }}" == "windows" ]; then
           yarn build:win
-          mv dist/fosslight_gui*.exe fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.exe
+          sleep 5
+          7z a -tzip ./dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip ./dist/win-unpacked/*
+          mv ./dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip ./dist/fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
         fi
       shell: bash
     - name: Upload Release Asset
@@ -54,6 +62,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}    
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'exe' }}
-        asset_name: fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'exe' }}
+        asset_path: ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'zip' }}
+        asset_name: fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.${{ matrix.TARGET == 'ubuntu' && 'tar.gz' || matrix.TARGET == 'macos' && 'zip' || 'zip' }}
         asset_content_type: ${{ matrix.ASSET_MIME }}
