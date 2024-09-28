@@ -1,23 +1,21 @@
-appId: com.electron.fosslightgui
+appId: com.electron.fosslight_gui
 productName: fosslight_gui
 directories:
+  output: dist
   buildResources: build
 files:
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.eslintignore,.eslintrc.js,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
-  - "out/**/*"
+asarUnpack:
+  - resources/**
+afterSign: build/notarize.js
 win:
-  artifactName: ${name}-${version}-setup.${ext}
   executableName: fosslight_gui
   target:
-    - target: nsis
-      arch:
-        - x64
-        - arm64
     - target: zip
       arch:
         - x64
@@ -27,52 +25,29 @@ nsis:
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
-  createStartMenuShortcut: true
-  oneClick: false
-  perMachine: false
-  allowToChangeInstallationDirectory: true
 mac:
-  target:
-    - target: zip
-      arch:
-        - x64
-        - arm64
-        - universal
-  category: public.app-category.utilities
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
+    - NSCameraUsageDescription: Application requests access to the device's camera.
+    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
+dmg:
+  artifactName: ${name}-${version}.${ext}
 linux:
   target:
-    - target: deb
-      arch:
-        - x64
-        - armv7l
-        - arm64
-    - target: snap
-    - target: tar.gz
-      arch:
-        - x64
-        - armv7l
-        - arm64
-  maintainer: https://github.com/soonhong99/fosslight_gui
-  synopsis: FOSSLight Scanner GUI Application
+    - AppImage
+    - snap
+    - deb
+    - rpm
+    - tar.gz
+  maintainer: electronjs.org
   category: Utility
-  artifactName: ${name}-${version}-${arch}.${ext}
-snap:
-  base: core20
-  publish:
-    - provider: snapStore
-      publishAutoUpdate: true
+appImage:
+  artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
   provider: github
-  protocol: https
   owner: soonhong99
   repo: fosslight_scanner_gui
-  releaseType: draft
-  publishAutoUpdate: true
-electronDownload:
-  mirror: https://npmmirror.com/mirrors/electron/

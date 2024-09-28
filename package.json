@@ -15,10 +15,10 @@
     "start": "electron-vite preview",
     "dev": "electron-vite dev --watch",
     "build": "npm run typecheck && electron-vite build && electron-builder --dir",
+    "build:win": "npm run typecheck && electron-vite build && electron-builder --win --x64 --arm64 --config electron-builder.yml",
     "build:mac": "electron-vite build && electron-builder --mac --config electron-builder.yml",
-    "build:win": "npm run typecheck && electron-vite build && electron-builder build --win --config electron-builder.yml",
     "postinstall": "electron-builder install-app-deps",
-    "release:win": "npm run typecheck && electron-vite build && electron-builder --win --config electron-builder.yml",
+    "release:win": "npm run typecheck && electron-vite build && electron-builder --win --x64 --arm64 --publish always --config electron-builder.yml",
     "release:mac": "npm run typecheck && electron-vite build && electron-builder --mac --config electron-builder.yml",
     "release:linux-rpm-tar": "npm run typecheck && electron-vite build && electron-builder --linux rpm tar.gz --x64 --armv7l --arm64",
     "release:linux-deb-snap": "npm run typecheck && electron-vite build && electron-builder --linux --config electron-builder.yml"
