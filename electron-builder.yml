@@ -11,7 +11,7 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
   - "out/**/*"
 win:
-  artifactName: ${name}-${version}-${arch}-win.${ext}
+  artifactName: fosslight-gui-windows-setup-${version}.${ext}
   executableName: fosslight_gui
   target:
     - target: nsis
@@ -32,7 +32,7 @@ nsis:
   perMachine: false
   allowToChangeInstallationDirectory: true
 mac:
-  artifactName: ${name}-${version}-${arch}-mac.${ext}
+  artifactName: fosslight-gui-macos-setup-${version}.${ext}
   target:
     - target: zip
       arch:
@@ -61,7 +61,7 @@ linux:
   maintainer: https://github.com/soonhong99/fosslight_gui
   synopsis: FOSSLight Scanner GUI Application
   category: Utility
-  artifactName: ${name}-${version}-${arch}-linux.${ext}
+  artifactName: fosslight-gui-ubuntu-setup-${version}.${ext}
 snap:
   base: core20
   publish:
