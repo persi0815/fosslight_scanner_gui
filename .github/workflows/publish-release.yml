@@ -53,7 +53,7 @@ jobs:
         elif [ "${{ matrix.TARGET }}" == "windows" ]; then
           yarn build:win
           sleep 5
-          7z a -tzip ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip ./win-unpacked/*
+          7z a -tzip ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip ./dist/win-unpacked/*
           mv ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}-temp.zip ./fosslight-gui-${{ matrix.TARGET }}-setup-${{ env.VERSION }}.zip
           echo "Listing dist directory..."
           ls ./dist
